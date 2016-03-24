@@ -10,38 +10,19 @@ typedef unsigned long int uint64_t;
 #pragma pack(push, 1)
 
 struct pv_data_IMU_s {
-	float acc_x_law;
-	float acc_y_law;
-	float acc_z_law;
-	float acc_x_law_filter;
-	float acc_y_law_filter;
-	float acc_z_law_filter;
-	// float gyro_x;
-	// float gyro_y;
-	// float gyro_z;
-	// float mag_x;
-	// float mag_y;
-	// float mag_z;
-	// float temp_acc;
-	// float temp_gyro;
-	// float temp_mag;
+	uint64_t numCnt;
+	uint64_t timestamp;
+	int16_t accelerometer_raw[3];//[9];
+	float accelerometer_m_s2[3];//[9];
 };
+
 struct pv_data_IMU_str_s {
-	char acc_x_law[32];
-	char acc_y_law[32];
-	char acc_z_law[32];
-	char acc_x_law_filter[32];
-	char acc_y_law_filter[32];
-	char acc_z_law_filter[32];
-	// float gyro_x;
-	// float gyro_y;
-	// float gyro_z;
-	// float mag_x;
-	// float mag_y;
-	// float mag_z;
-	// float temp_acc;
-	// float temp_gyro;
-	// float temp_mag;
+
+	char numCnt[32];
+	char timestamp[32];
+	char accelerometer_raw[3][32];//[9];
+	char accelerometer_m_s2[3][32];//[9];
+
 };
 
 
@@ -111,41 +92,45 @@ int main(int argc, char *argv[]) {
 	struct pv_data_IMU_s *temp = (struct pv_data_IMU_s *)buf;
 	int i=0;
 
+	char numCnt[32];
+	char timestamp[32];
+	char accelerometer_raw[3][32];//[9];
+	char accelerometer_m_s2[3][32];//[9];
 
-	fprintf(output, "acc_x_law,"
-					"acc_y_law,"
-					"acc_z_law,"
-					"acc_x_law_filter,"
-					"acc_y_law_filter,"
-					"acc_z_law_filter,"
-					/*
-					"accel_x,"
-					"accel_y,"
-					"accel_z,"
-					"accel_temp,"
-					*/
+
+	fprintf(output, "numCnt,"
+					"timestamp,"
+					"accelerometer_raw0,"
+					"accelerometer_raw1,"
+					"accelerometer_raw2,"
+					"accelerometer_m_s2_0,"
+					"accelerometer_m_s2_1,"
+					"accelerometer_m_s2_1,"
 					"\r\n"
 				);
 
 	for(i=0; i<data_count; i++) {
 		memset(&log_string, '\0', sizeof(struct pv_data_IMU_str_s));
 
-		sprintf(log_string.acc_x_law, "%8.8f", temp[i].acc_x_law);
-		sprintf(log_string.acc_y_law, "%8.8f", temp[i].acc_y_law);
-		sprintf(log_string.acc_z_law, "%8.8f", temp[i].acc_z_law);
+		sprintf(log_string.numCnt, "%lu", temp[i].numCnt);
+		sprintf(log_string.timestamp, "%lu", temp[i].timestamp);
+		sprintf(log_string.accelerometer_raw[0], "%d", temp[i].accelerometer_raw[0]);
+		sprintf(log_string.accelerometer_raw[1], "%d", temp[i].accelerometer_raw[1]);
+		sprintf(log_string.accelerometer_raw[2], "%d", temp[i].accelerometer_raw[2]);
+		sprintf(log_string.accelerometer_m_s2[0], "%8.4f", temp[i].accelerometer_m_s2[0]);
+		sprintf(log_string.accelerometer_m_s2[1], "%8.4f", temp[i].accelerometer_m_s2[1]);
+		sprintf(log_string.accelerometer_m_s2[2], "%8.4f", temp[i].accelerometer_m_s2[2]);
 
-		sprintf(log_string.acc_x_law_filter, "%8.8f", temp[i].acc_x_law_filter);
-		sprintf(log_string.acc_y_law_filter, "%8.8f", temp[i].acc_y_law_filter);
-		sprintf(log_string.acc_z_law_filter, "%8.8f", temp[i].acc_z_law_filter);
 
-
-		  fprintf(output, "%s,%s,%s,%s,%s,%s\n", 
-				log_string.acc_x_law,
-				log_string.acc_y_law, 
-				log_string.acc_z_law, 
-				log_string.acc_x_law_filter, 
-				log_string.acc_y_law_filter,
-			    log_string.acc_z_law_filter
+		  fprintf(output, "%s,%s,%s,%s,%s,%s,%s,%s\n", 
+				log_string.numCnt,
+				log_string.timestamp,
+				log_string.accelerometer_raw[0],
+				log_string.accelerometer_raw[1],
+				log_string.accelerometer_raw[2],
+				log_string.accelerometer_m_s2[0],
+				log_string.accelerometer_m_s2[1],
+				log_string.accelerometer_m_s2[2]
 				);
 	}
 
